@@ -1,28 +1,68 @@
-from flask import Flask, Response, render_template
+from flask import Flask, Response, render_template, request
 from flask_login import login_user, login_required, logout_user, current_user, \
     LoginManager
-from werkzeug.utils import redirect
+from flask_restful import Api
+from werkzeug.utils import redirect, secure_filename
 
 from data.db_session import create_session, global_init
 from data.forms.LoginForm import LoginForm
+from data.forms.NewVideoForm import NewVideoForm
 from data.forms.RegisterForm import RegisterForm
+from data.resources import video_resources
 from data.users import User
+from data.videos import Video
+import os.path
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
+app.config['UPLOAD_FOLDER'] = 'static/videos/'
+app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 5120
 login_manager = LoginManager()
 login_manager.init_app(app)
 global_init('db/database.db')
 
-
-def main():
-    pass
+api = Api(app)
+api.add_resource(video_resources.VideosListResource, '/videos')
+api.add_resource(video_resources.VideosResource, '/videos/<int:video_id>')
 
 
 @app.route('/')
-def page():
+def main():
     return render_template('index.html', title='Goty',
                            current_user=current_user)
+
+
+@app.route('/video/post', methods=['GET', 'POST'])
+def video_post():
+    ALLOWED_EXTENSIONS = {'avi', 'mp4'}
+
+    def allowed_file(filename):
+        return '.' in filename and filename.rsplit('.', 1)[
+            1].lower() in ALLOWED_EXTENSIONS
+
+    form = NewVideoForm()
+    if form.validate_on_submit():
+        if not allowed_file(form.title.data):
+            render_template('new_video.html',
+                            title='Goty - Upload a video',
+                            current_user=current_user, form=form,
+                            message='Неверный формат файла')
+
+        db_sess = create_session()
+        f = request.files['file']
+        video = Video(
+            title=form.title.data,
+            description=form.description.data,
+            creator_id=current_user.id
+        )
+        video.set_video(f)
+
+        db_sess.add(video)
+        db_sess.commit()
+        return redirect('/')
+
+    return render_template('new_video.html', title='Goty - Upload a video',
+                           current_user=current_user, form=form)
 
 
 @login_manager.user_loader
