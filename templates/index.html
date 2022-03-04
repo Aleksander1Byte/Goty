@@ -16,13 +16,12 @@
                 <ul class="menu header__menu">
                     {% if current_user.is_authenticated %}
                     <li>
-                        <a href="/job" class="btn btn-secondary">Добавить работу</a>
-                        <a href="/view" class="btn btn-secondary">Текущие работы</a>
-                        <a href="/new_department" class="btn btn-secondary">Добавить департамент</a>
-                        <a href="/departments" class="btn btn-secondary">Текущие департаменты</a>
-                        <a class="navbar-brand" href="/logout">
-                            {{ current_user.name }} {{ current_user.surname }}</a>
+                        <a href="/page" class="btn btn-secondary">Страница</a>
                     </li>
+                    <li>
+                        <a class="navbar-brand nickname" href="/logout">{{ current_user.nickname }}</a>
+                    </li>
+
                     {% else %}
                     <li><a class="btn btn-primary" href="/login">Вход</a></li>
                     <li><a class="btn btn-success" href="/register">Регистрация</a></li>
