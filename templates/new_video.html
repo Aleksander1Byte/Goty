@@ -1,8 +1,8 @@
 {% extends "index.html" %}
 
 {% block content %}
-
-<form action="" method="POST" class="form" enctype=multipart/form-data >
+<link rel="stylesheet" href="/static/css/progress_bar.css">
+<form action="" method="POST" class="form" enctype=multipart/form-data>
     <h1>Загрузить видео</h1>
     {{ form.hidden_tag() }}
     <div class="form-group">
@@ -36,5 +36,13 @@
     </p>
     <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
     {{message}}
+
+    <div class="progress">
+        <div class="bar"></div>
+        <div class="percent">0%</div>
+    </div>
+
+    <div id="status"></div>
 </form>
+<script src="../static/js/progress_bar.js"></script>
 {% endblock %}

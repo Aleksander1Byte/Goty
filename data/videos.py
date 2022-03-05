@@ -26,5 +26,5 @@ class Video(SqlAlchemyBase, UserMixin, SerializerMixin):
         """Создаёт путь к видео"""
         self.path = os.path.join(
             app.config['UPLOAD_FOLDER']) + generate_hash() + video.filename[
-                                                             -4:]
+                                                             -4:]  # .mp4
         video.save(self.path)
