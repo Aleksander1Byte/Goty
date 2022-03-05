@@ -1,8 +1,8 @@
-from flask import Flask, Response, render_template, request
+from flask import Flask, Response, render_template, request, jsonify
 from flask_login import login_user, login_required, logout_user, current_user, \
     LoginManager
 from flask_restful import Api
-from werkzeug.utils import redirect, secure_filename
+from werkzeug.utils import redirect
 
 from data.db_session import create_session, global_init
 from data.forms.LoginForm import LoginForm
@@ -33,6 +33,7 @@ def main():
 
 
 @app.route('/video/post', methods=['GET', 'POST'])
+@login_required
 def video_post():
     ALLOWED_EXTENSIONS = {'avi', 'mp4'}
 
@@ -42,14 +43,11 @@ def video_post():
 
     form = NewVideoForm()
     if form.validate_on_submit():
-        if not allowed_file(form.title.data):
-            render_template('new_video.html',
-                            title='Goty - Upload a video',
-                            current_user=current_user, form=form,
-                            message='Неверный формат файла')
+        f = request.files['file']
+        if not allowed_file(f.filename):
+            return '<h3>Неверный формат файла!</h3>'
 
         db_sess = create_session()
-        f = request.files['file']
         video = Video(
             title=form.title.data,
             description=form.description.data,
@@ -59,7 +57,7 @@ def video_post():
 
         db_sess.add(video)
         db_sess.commit()
-        return redirect('/')
+        return '<h3>Успешная загрузка!</h3>'
 
     return render_template('new_video.html', title='Goty - Upload a video',
                            current_user=current_user, form=form)
