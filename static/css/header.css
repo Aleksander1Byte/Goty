@@ -30,7 +30,7 @@ header {
 .header__menu {
     display: flex;
     position: relative;
-    bottom: 20px;
+    bottom: 30px;
     z-index: 2;
 }
 .header__menu li {
