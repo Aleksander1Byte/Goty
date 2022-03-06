@@ -1,6 +1,7 @@
 from flask_login import UserMixin
 import sqlalchemy
 from sqlalchemy_serializer import SerializerMixin
+from werkzeug.datastructures import FileStorage
 
 from .db_session import SqlAlchemyBase
 from sqlalchemy import orm
@@ -8,9 +9,11 @@ import os
 
 from .tools.hash import generate_hash
 from PIL import Image
+from multipledispatch import dispatch
 
 
 class Video(SqlAlchemyBase, UserMixin, SerializerMixin):
+    PREVIEW_SIZE = (400, 600)
     __tablename__ = 'videos'
     id = sqlalchemy.Column(sqlalchemy.Integer,
                            primary_key=True, autoincrement=True)
@@ -32,10 +35,11 @@ class Video(SqlAlchemyBase, UserMixin, SerializerMixin):
         ) + 'videos/' + generate_hash() + video.filename[-4:]  # .mp4
         video.save(self.path)
 
+    @dispatch(FileStorage)
     def set_preview(self, preview):
         def fix_preview(preview_1):
             im = Image.open(preview_1)
-            im.thumbnail((400, 600), Image.ANTIALIAS)
+            im.thumbnail(Video.PREVIEW_SIZE, Image.ANTIALIAS)
             return im
 
         from main import app
@@ -46,3 +50,20 @@ class Video(SqlAlchemyBase, UserMixin, SerializerMixin):
         ) + 'previews/' + generate_hash() + preview.filename[-4:]
         preview = fix_preview(preview)
         preview.save(self.preview_path, 'jpeg')
+
+    @dispatch(str)
+    def set_preview(self, temp_preview_path):
+        def fix_preview(preview_1):
+            im = Image.open(preview_1)
+            im.thumbnail(Video.PREVIEW_SIZE, Image.ANTIALIAS)
+            return im
+
+        from main import app
+        """Создаёт путь к превью и задаёт его размеры"""
+        self.preview_path = os.path.join(
+            app.config[
+                'UPLOAD_FOLDER']
+        ) + 'previews/' + generate_hash() + temp_preview_path[-4:]
+        preview = fix_preview(temp_preview_path)
+        preview.save(self.preview_path, 'jpeg')
+        os.remove(temp_preview_path)

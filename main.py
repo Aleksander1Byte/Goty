@@ -2,6 +2,7 @@ from flask import Flask, Response, render_template, request, jsonify
 from flask_login import login_user, login_required, logout_user, current_user, \
     LoginManager
 from flask_restful import Api
+from werkzeug.exceptions import BadRequestKeyError
 from werkzeug.utils import redirect
 
 from data.db_session import create_session, global_init
@@ -9,6 +10,7 @@ from data.forms.LoginForm import LoginForm
 from data.forms.NewVideoForm import NewVideoForm
 from data.forms.RegisterForm import RegisterForm
 from data.resources import video_resources
+from data.tools.get_preview import get_preview
 from data.users import User
 from data.videos import Video
 import os.path
@@ -56,12 +58,15 @@ def video_post():
     form = NewVideoForm()
     if form.validate_on_submit():
         f = request.files['file']
-        preview = request.files['preview']
+        try:
+            preview = request.files['preview']
+        except BadRequestKeyError:
+            preview = None
         if not allowed_file_video(f.filename):
             return '<h3>Неверный формат видеофайла!</h3>'
-        if not allowed_file_image(preview.filename):
+        if preview is not None and not allowed_file_image(preview.filename):
             return '<h3>Неверный формат предварительного изображения!</h3>'
-        if not allowed_file_image_size(preview):
+        if preview is not None and not allowed_file_image_size(preview):
             return '<h3>Размер изображения слишком велик!</h3>'
 
         db_sess = create_session()
@@ -71,6 +76,8 @@ def video_post():
             creator_id=current_user.id
         )
         video.set_video(f)
+        if preview is None:
+            preview = get_preview(video.path)  # str
         video.set_preview(preview)
 
         db_sess.add(video)
