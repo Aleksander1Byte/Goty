@@ -1,0 +1,15 @@
+{% extends "index.html" %}
+
+{% block content %}
+
+<div class="video">
+    <video controls>
+        <source src="../{{ video['path'] }}">
+    </video>
+    <h1>{{ video['title'] }}</h1>
+    <hr>
+    <h2>{{ author }}</h2>
+    <h3>{{ video['description'] }}</h3>
+</div>
+
+{% endblock %}

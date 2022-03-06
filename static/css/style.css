@@ -20,3 +20,11 @@ form {
     font-size: 16px;
     text-decoration: none;
 }
+video {
+    width: 80%;
+    height: auto;
+    aspect-ratio: attr(width) / attr(height);
+}
+div.video hr {
+    width: 80%;
+}

@@ -36,7 +36,6 @@ def main():
     for video in videos['videos']:
         video['creator_nick'] = db_sess.query(User).get(
             video['creator_id']).nickname
-    print(videos['videos'])
 
     return render_template('view_videos.html', title='Goty',
                            current_user=current_user, videos=videos)
@@ -47,7 +46,9 @@ def watch_video(video_hash):
     db_sess = create_session()
     video = db_sess.query(Video).filter(
         Video.path.like("%" + video_hash + "%")).first()
-    print(video.title)
+    return render_template('watch.html', title=video.title,
+                           current_user=current_user, video=video,
+                           author=video.creator.nickname)
 
 
 @app.route('/video/post', methods=['GET', 'POST'])

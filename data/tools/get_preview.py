@@ -8,7 +8,7 @@ def get_preview(video_file) -> str:
     frames = cap.get(cv2.CAP_PROP_FRAME_COUNT)
     fps = cap.get(cv2.CAP_PROP_FPS)
     msecs = int(frames * fps)
-    cap.set(cv2.CAP_PROP_POS_MSEC, randint(1000, msecs - 1))  # проблема где-то тут
+    cap.set(cv2.CAP_PROP_POS_MSEC, randint(2000, msecs - 1000))  # проблема где-то тут
     success, image = cap.read()
     if success:
         name = f'{randint(1, msecs)}.jpg'
