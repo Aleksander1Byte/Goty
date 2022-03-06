@@ -1,0 +1,16 @@
+{% extends "index.html" %}
+
+{% block content %}
+
+    <div class="videos_container">
+        {% for video in videos['videos'] %}
+        <ul>
+            <li><a href="watch/{{ video['path'].split('/')[-1][:-4] }}"><img src="{{ video['preview_path'] }}"></a>
+                <h4>{{ video['title'] }}</h4> <h5>{{ video['creator_nick'] }}</h5>
+            </li>
+        </ul>
+        {% endfor %}
+
+    </div>
+
+{% endblock %}

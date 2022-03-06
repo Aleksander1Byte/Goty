@@ -35,7 +35,7 @@ header {
 }
 .header__menu li {
     list-style: none;
-    margin: 0px 0px 0px 18px;
+    margin: 0px 0px -30px 18px;
     font-size: 16px;
     text-decoration: none;
 }

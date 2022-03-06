@@ -4,3 +4,19 @@ body {
 form {
     margin: 0 15% 0 15%;
 }
+.videos_container {
+    display: flex;
+    flex-wrap: wrap;
+    width: 120%;
+    max-width: 1920px;
+    margin: 0 auto;
+    padding: 10px;
+    position: relative;
+}
+
+.videos_container li {
+    list-style: none;
+    margin: 0px 0px 0px 18px;
+    font-size: 16px;
+    text-decoration: none;
+}

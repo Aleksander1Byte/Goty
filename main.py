@@ -2,6 +2,7 @@ from flask import Flask, Response, render_template, request, jsonify
 from flask_login import login_user, login_required, logout_user, current_user, \
     LoginManager
 from flask_restful import Api
+from requests import get
 from werkzeug.exceptions import BadRequestKeyError
 from werkzeug.utils import redirect
 
@@ -18,7 +19,7 @@ import os.path
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 app.config['UPLOAD_FOLDER'] = 'static/'
-app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 5120
+app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 5120  # 5 GB
 login_manager = LoginManager()
 login_manager.init_app(app)
 global_init('db/database.db')
@@ -30,8 +31,23 @@ api.add_resource(video_resources.VideosResource, '/videos/<int:video_id>')
 
 @app.route('/')
 def main():
-    return render_template('index.html', title='Goty',
-                           current_user=current_user)
+    db_sess = create_session()
+    videos = get('http://127.0.0.1:8080/videos').json()
+    for video in videos['videos']:
+        video['creator_nick'] = db_sess.query(User).get(
+            video['creator_id']).nickname
+    print(videos['videos'])
+
+    return render_template('view_videos.html', title='Goty',
+                           current_user=current_user, videos=videos)
+
+
+@app.route('/watch/<string:video_hash>')
+def watch_video(video_hash):
+    db_sess = create_session()
+    video = db_sess.query(Video).filter(
+        Video.path.like("%" + video_hash + "%")).first()
+    print(video.title)
 
 
 @app.route('/video/post', methods=['GET', 'POST'])

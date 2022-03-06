@@ -37,33 +37,30 @@ class Video(SqlAlchemyBase, UserMixin, SerializerMixin):
 
     @dispatch(FileStorage)
     def set_preview(self, preview):
-        def fix_preview(preview_1):
-            im = Image.open(preview_1)
-            im.thumbnail(Video.PREVIEW_SIZE, Image.ANTIALIAS)
-            return im
-
         from main import app
         """Создаёт путь к превью и задаёт его размеры"""
         self.preview_path = os.path.join(
             app.config[
                 'UPLOAD_FOLDER']
         ) + 'previews/' + generate_hash() + preview.filename[-4:]
-        preview = fix_preview(preview)
-        preview.save(self.preview_path, 'jpeg')
+        preview = self.fix_preview(preview)
+        preview.save(self.preview_path, 'png')
 
     @dispatch(str)
     def set_preview(self, temp_preview_path):
-        def fix_preview(preview_1):
-            im = Image.open(preview_1)
-            im.thumbnail(Video.PREVIEW_SIZE, Image.ANTIALIAS)
-            return im
 
         from main import app
-        """Создаёт путь к превью и задаёт его размеры"""
+        """Создаёт путь к превью, задаёт его размеры и удаляет врмееный файл"""
         self.preview_path = os.path.join(
             app.config[
                 'UPLOAD_FOLDER']
         ) + 'previews/' + generate_hash() + temp_preview_path[-4:]
-        preview = fix_preview(temp_preview_path)
+        preview = self.fix_preview(temp_preview_path)
         preview.save(self.preview_path, 'jpeg')
         os.remove(temp_preview_path)
+
+    @staticmethod
+    def fix_preview(preview_1):
+        im = Image.open(preview_1)
+        im.thumbnail(Video.PREVIEW_SIZE, Image.ANTIALIAS)
+        return im
