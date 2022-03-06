@@ -20,7 +20,8 @@ class VideosResource(Resource):
         session = db_session.create_session()
         video = session.query(Video).get(video_id)
         return jsonify({'videos': video.to_dict(
-            only=('id', 'path', 'creator_id', 'title', 'description'))})
+            only=('id', 'path', 'creator_id', 'title', 'description',
+                  'preview_path'))})
 
     def delete(self, video_id):
         import os
@@ -38,7 +39,8 @@ class VideosListResource(Resource):
         session = db_session.create_session()
         videos = session.query(Video).all()
         return jsonify({'videos': [item.to_dict(
-            only=('id', 'path', 'creator_id', 'title', 'description')) for item in videos]})
+            only=('id', 'path', 'creator_id', 'title', 'description', 'preview_path')) for item
+            in videos]})
 
     def post(self):
         args = parser.parse_args()
@@ -50,7 +52,8 @@ class VideosListResource(Resource):
             path=args['path'],
             creator_id=args['creator_id'],
             description=args['description'],
-            title=args['title']
+            title=args['title'],
+            preview_path=args['preview_path']
         )
         session.add(video)
         session.commit()

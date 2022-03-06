@@ -16,6 +16,7 @@ class Video(SqlAlchemyBase, UserMixin, SerializerMixin):
     title = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     description = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     path = sqlalchemy.Column(sqlalchemy.String, nullable=False)
+    preview_path = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     creator_id = sqlalchemy.Column(sqlalchemy.Integer,
                                    sqlalchemy.ForeignKey("users.id"),
                                    nullable=False)
