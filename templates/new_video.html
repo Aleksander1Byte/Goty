@@ -34,6 +34,19 @@
     </p>
     {% endfor %}
     </p>
+
+    <div class="form-group">
+        <p>
+            {{ form.preview.label }}<br>
+            <input type="file" class="form-control-file" id="preview" name="preview">
+            {% for error in form.preview.errors %}
+        <p class="alert alert-danger" role="alert">
+            {{ error }}
+        </p>
+        {% endfor %}
+        </p>
+    </div>
+
     <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
     {{message}}
 

@@ -15,7 +15,7 @@ import os.path
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
-app.config['UPLOAD_FOLDER'] = 'static/videos/'
+app.config['UPLOAD_FOLDER'] = 'static/'
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 5120
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -35,17 +35,34 @@ def main():
 @app.route('/video/post', methods=['GET', 'POST'])
 @login_required
 def video_post():
-    ALLOWED_EXTENSIONS = {'avi', 'mp4'}
+    ALLOWED_EXTENSIONS_VIDEO = {'avi', 'mp4'}
+    ALLOWED_EXTENSIONS_IMAGE = {'png', 'jpg', 'bmp', 'jpeg'}
 
-    def allowed_file(filename):
+    def allowed_file_video(filename):
         return '.' in filename and filename.rsplit('.', 1)[
-            1].lower() in ALLOWED_EXTENSIONS
+            1].lower() in ALLOWED_EXTENSIONS_VIDEO
+
+    def allowed_file_image(filename):
+        return '.' in filename and filename.rsplit('.', 1)[
+            1].lower() in ALLOWED_EXTENSIONS_IMAGE
+
+    def allowed_file_image_size(file):
+        file.seek(0, os.SEEK_END)
+        size = file.tell()
+        if size / 1024 > 5120:
+            return False
+        return True
 
     form = NewVideoForm()
     if form.validate_on_submit():
         f = request.files['file']
-        if not allowed_file(f.filename):
-            return '<h3>Неверный формат файла!</h3>'
+        preview = request.files['preview']
+        if not allowed_file_video(f.filename):
+            return '<h3>Неверный формат видеофайла!</h3>'
+        if not allowed_file_image(preview.filename):
+            return '<h3>Неверный формат предварительного изображения!</h3>'
+        if not allowed_file_image_size(preview):
+            return '<h3>Размер изображения слишком велик!</h3>'
 
         db_sess = create_session()
         video = Video(
@@ -54,6 +71,7 @@ def video_post():
             creator_id=current_user.id
         )
         video.set_video(f)
+        video.set_preview(preview)
 
         db_sess.add(video)
         db_sess.commit()

@@ -7,6 +7,7 @@ from sqlalchemy import orm
 import os
 
 from .tools.hash import generate_hash
+from PIL import Image
 
 
 class Video(SqlAlchemyBase, UserMixin, SerializerMixin):
@@ -26,6 +27,22 @@ class Video(SqlAlchemyBase, UserMixin, SerializerMixin):
         from main import app
         """Создаёт путь к видео"""
         self.path = os.path.join(
-            app.config['UPLOAD_FOLDER']) + generate_hash() + video.filename[
-                                                             -4:]  # .mp4
+            app.config[
+                'UPLOAD_FOLDER']
+        ) + 'videos/' + generate_hash() + video.filename[-4:]  # .mp4
         video.save(self.path)
+
+    def set_preview(self, preview):
+        def fix_preview(preview_1):
+            im = Image.open(preview_1)
+            im.thumbnail((400, 600), Image.ANTIALIAS)
+            return im
+
+        from main import app
+        """Создаёт путь к превью и задаёт его размеры"""
+        self.preview_path = os.path.join(
+            app.config[
+                'UPLOAD_FOLDER']
+        ) + 'previews/' + generate_hash() + preview.filename[-4:]
+        preview = fix_preview(preview)
+        preview.save(self.preview_path, 'jpeg')

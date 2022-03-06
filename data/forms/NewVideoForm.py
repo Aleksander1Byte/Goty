@@ -8,4 +8,5 @@ class NewVideoForm(FlaskForm):
                      validators=[DataRequired()])
     title = StringField('Название видео', validators=[DataRequired()])
     description = TextAreaField("Описание видео")
+    preview = FileField("Превью видео (<5МБ)")
     submit = SubmitField('Загрузить видео')
