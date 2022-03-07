@@ -8,19 +8,20 @@
     </video>
     <h1>{{ video['title'] }}</h1>
     <hr>
-    <h2>{{ author }}</h2>
+    <h2><a href="../user/{{ video['creator_id'] }}">{{ author }}</a></h2>
+    <h4> {{ video['created_date'].strftime('%Y-%m-%d %H:%M:%S') }}</h4>
     <div class="other_videos videos_container">
-    {% for video in videos %}
+        {% for video in videos %}
         <ul>
             <li><a href="{{ video['path'].split('/')[-1][:-4] }}"><img src="../{{ video['preview_path'] }}"></a>
-                <h4>{{ video['title'] }}</h4> <h5>{{ video['creator_nick'] }}</h5>
+                <h4>{{ video['title'] }}</h4> <h5><a href="../user/{{ video['creator_id'] }}">{{ video['creator_nick']
+                    }}</a> {{ video['created_date'] }} </h5>
             </li>
         </ul>
         {% endfor %}
+    </div>
+    <h3 class="description" style="margin: {{ -9 * (videos|length)}}% 0px 0px 0px">{{ video['description'] }}</h3>
 </div>
-    <h3 class="description">{{ video['description'] }}</h3>
-</div>
-
 
 
 {% endblock %}

@@ -2,6 +2,7 @@ from flask_login import UserMixin
 import sqlalchemy
 from sqlalchemy_serializer import SerializerMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+import datetime
 
 from .db_session import SqlAlchemyBase
 from sqlalchemy import orm
@@ -14,6 +15,9 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     nickname = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     email = sqlalchemy.Column(sqlalchemy.String, unique=True, nullable=False)
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=False)
+    created_date = sqlalchemy.Column(sqlalchemy.DateTime,
+                                     default=datetime.datetime.now)
+
     videos = orm.relation('Video', back_populates='creator')
 
     def set_password(self, password):

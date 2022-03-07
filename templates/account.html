@@ -1,0 +1,21 @@
+{% extends "index.html" %}
+
+{% block content %}
+
+<center>
+    <h1>{{ user.nickname }}</h1>
+</center>
+<h3>Дата регистрации: {{ user.created_date.strftime('%Y-%m-%d') }}</h3>
+<h3>Видео загружено: {{ user.videos|length }}</h3>
+<div class="videos_container">
+    {% for video in user.videos %}
+    <ul>
+        <li><a href="../watch/{{ video['path'].split('/')[-1][:-4] }}"><img src="../{{ video['preview_path'] }}"></a>
+            <h4>{{ video['title'] }}</h4> <h5>{{ video['created_date'].strftime('%Y-%m-%d %H:%M:%S') }}</h5>
+        </li>
+    </ul>
+    {% endfor %}
+</div>
+
+
+{% endblock %}

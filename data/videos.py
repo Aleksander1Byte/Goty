@@ -6,6 +6,7 @@ from werkzeug.datastructures import FileStorage
 from .db_session import SqlAlchemyBase
 from sqlalchemy import orm
 import os
+import datetime
 
 from .tools.hash import generate_hash
 from PIL import Image
@@ -21,6 +22,8 @@ class Video(SqlAlchemyBase, UserMixin, SerializerMixin):
     description = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     path = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     preview_path = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    created_date = sqlalchemy.Column(sqlalchemy.DateTime,
+                                     default=datetime.datetime.now)
     creator_id = sqlalchemy.Column(sqlalchemy.Integer,
                                    sqlalchemy.ForeignKey("users.id"),
                                    nullable=False)

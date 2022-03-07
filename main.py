@@ -1,3 +1,5 @@
+from random import shuffle
+
 from flask import Flask, Response, render_template, request, jsonify
 from flask_login import login_user, login_required, logout_user, current_user, \
     LoginManager
@@ -33,22 +35,44 @@ api.add_resource(video_resources.VideosResource, '/videos/<int:video_id>')
 def main():
     db_sess = create_session()
     videos = get('http://127.0.0.1:8080/videos').json()
-    for video in videos['videos']:
+    for video in videos['videos'][:12]:
         video['creator_nick'] = db_sess.query(User).get(
             video['creator_id']).nickname
+    videos = videos['videos']
+    shuffle(videos)
 
     return render_template('view_videos.html', title='Goty',
                            current_user=current_user, videos=videos)
 
 
+@app.route('/user/<string:user_id>')
+def account(user_id):
+    db_sess = create_session()
+    user = db_sess.query(User).get(user_id)
+    #  user.id == current_user.id
+    return render_template('account.html', title=user.nickname,
+                           current_user=current_user, user=user)
+
+
 @app.route('/watch/<string:video_hash>')
 def watch_video(video_hash):
+    index = 0
     db_sess = create_session()
-    video = db_sess.query(Video).filter(
+    video_orig = db_sess.query(Video).filter(
         Video.path.like("%" + video_hash + "%")).first()
-    return render_template('watch.html', title=video.title,
-                           current_user=current_user, video=video,
-                           author=video.creator.nickname)
+
+    videos = get('http://127.0.0.1:8080/videos').json()
+    for video in videos['videos']:
+        if video['id'] == video_orig.id:
+            index = videos['videos'].index(video)
+        video['creator_nick'] = db_sess.query(User).get(
+            video['creator_id']).nickname
+    videos['videos'].pop(index)
+    videos = videos['videos']
+
+    return render_template('watch.html', title=video_orig.title,
+                           current_user=current_user, video=video_orig,
+                           author=video_orig.creator.nickname, videos=videos)
 
 
 @app.route('/video/post', methods=['GET', 'POST'])
