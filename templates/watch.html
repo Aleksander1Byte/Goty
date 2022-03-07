@@ -9,7 +9,18 @@
     <h1>{{ video['title'] }}</h1>
     <hr>
     <h2>{{ author }}</h2>
-    <h3>{{ video['description'] }}</h3>
+    <div class="other_videos videos_container">
+    {% for video in videos %}
+        <ul>
+            <li><a href="{{ video['path'].split('/')[-1][:-4] }}"><img src="../{{ video['preview_path'] }}"></a>
+                <h4>{{ video['title'] }}</h4> <h5>{{ video['creator_nick'] }}</h5>
+            </li>
+        </ul>
+        {% endfor %}
 </div>
+    <h3 class="description">{{ video['description'] }}</h3>
+</div>
+
+
 
 {% endblock %}

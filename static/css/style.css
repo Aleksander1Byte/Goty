@@ -7,7 +7,7 @@ form {
 .videos_container {
     display: flex;
     flex-wrap: wrap;
-    width: 120%;
+    width: 110%;
     max-width: 1920px;
     margin: 0 auto;
     padding: 10px;
@@ -21,10 +21,21 @@ form {
     text-decoration: none;
 }
 video {
-    width: 80%;
+    width: 75%;
     height: auto;
     aspect-ratio: attr(width) / attr(height);
 }
 div.video hr {
-    width: 80%;
+    width: 75%;
+}
+.other_videos {
+    display: flex;
+    margin: -53% 0px 0px 76%;
+    width: 25%;
+    align-items: flex-end;
+    text-align: left;
+}
+.description {
+    margin: 7% 0px 0px 0px;
+    width: 73%;
 }
