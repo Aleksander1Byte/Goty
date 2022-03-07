@@ -10,17 +10,23 @@
     <hr>
     <h2><a href="../user/{{ video['creator_id'] }}">{{ author }}</a></h2>
     <h4> {{ video['created_date'].strftime('%Y-%m-%d %H:%M:%S') }}</h4>
+    {% if current_user.is_authenticated and current_user.id == video['creator_id'] %}
+    <h3><a href="/video_delete/{{ video['id'] }}" class="btn btn-danger">
+        Удалить
+    </a></h3>
+    {% endif %}
     <div class="other_videos videos_container">
         {% for video in videos %}
         <ul>
             <li><a href="{{ video['path'].split('/')[-1][:-4] }}"><img src="../{{ video['preview_path'] }}"></a>
                 <h4>{{ video['title'] }}</h4> <h5><a href="../user/{{ video['creator_id'] }}">{{ video['creator_nick']
-                    }}</a> {{ video['created_date'] }} </h5>
+                    }}</a>
+                    {{ video['created_date'] }} </h5>
             </li>
         </ul>
         {% endfor %}
     </div>
-    <h3 class="description" style="margin: {{ -9 * (videos|length)}}% 0px 0px 0px">{{ video['description'] }}</h3>
+    <h3 class="description" style="margin: {{ -(23 - (5 - ((videos|length) % 5)) + (7 * ((videos|length) - (2 * (5 - ((videos|length) % 5)))))) }}% 0px 0px 0px">{{ video['description'] }}</h3>
 </div>
 
 

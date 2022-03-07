@@ -3,8 +3,8 @@ from random import shuffle
 from flask import Flask, Response, render_template, request, jsonify
 from flask_login import login_user, login_required, logout_user, current_user, \
     LoginManager
-from flask_restful import Api
-from requests import get
+from flask_restful import Api, abort
+from requests import get, delete
 from werkzeug.exceptions import BadRequestKeyError
 from werkzeug.utils import redirect
 
@@ -54,6 +54,13 @@ def account(user_id):
                            current_user=current_user, user=user)
 
 
+@app.route('/video_delete/<int:video_id>')
+@login_required
+def delete_video(video_id):
+    delete(f'http://127.0.0.1:8080/videos/{video_id}')
+    return redirect('/')
+
+
 @app.route('/watch/<string:video_hash>')
 def watch_video(video_hash):
     index = 0
@@ -62,12 +69,17 @@ def watch_video(video_hash):
         Video.path.like("%" + video_hash + "%")).first()
 
     videos = get('http://127.0.0.1:8080/videos').json()
-    for video in videos['videos']:
-        if video['id'] == video_orig.id:
-            index = videos['videos'].index(video)
-        video['creator_nick'] = db_sess.query(User).get(
-            video['creator_id']).nickname
+    try:
+        for video in videos['videos']:
+            if video['id'] == video_orig.id:
+                index = videos['videos'].index(video)
+            video['creator_nick'] = db_sess.query(User).get(
+                video['creator_id']).nickname
+    except AttributeError:
+        abort(404, message=f"Video {video_hash} not found")
     videos['videos'].pop(index)
+    videos['videos'] = videos['videos'][:4]
+    shuffle(videos['videos'])
     videos = videos['videos']
 
     return render_template('watch.html', title=video_orig.title,
