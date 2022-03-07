@@ -137,8 +137,11 @@ def video_post():
         db_sess.commit()
         return '<h3>Успешная загрузка!</h3>'
 
-    return render_template('new_video.html', title='Goty - Upload a video',
-                           current_user=current_user, form=form)
+    if request.method == 'GET':
+        return render_template('new_video.html', title='Goty - Upload a video',
+                               current_user=current_user, form=form)
+    else:
+        return ''
 
 
 @login_manager.user_loader

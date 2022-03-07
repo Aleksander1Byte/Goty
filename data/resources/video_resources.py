@@ -29,6 +29,7 @@ class VideosResource(Resource):
         session = db_session.create_session()
         video = session.query(Video).get(video_id)
         os.remove(video.path)
+        os.remove(video.preview_path)
         session.delete(video)
         session.commit()
         return jsonify({'success': 'OK'})
