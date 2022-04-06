@@ -44,3 +44,13 @@ header {
     padding: 10px;
     line-height: 34px;
 }
+form.search {
+    margin: -25px 0 0 27%;
+}
+input.search {
+    width: 50%;
+    outline: none;
+}
+input:focus {
+    border-color: #42AAFF;
+}

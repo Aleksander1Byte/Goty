@@ -6,7 +6,7 @@
         {% for video in videos %}
         <ul>
             <li><a href="watch/{{ video['path'].split('/')[-1][:-4] }}"><img src="{{ video['preview_path'] }}"></a>
-                <h4>{{ video['title'] }}</h4> <h5>{{ video['creator_nick'] }}</h5>
+                <h4>{{ video['title'] }}</h4> <a href="../user/{{ video['creator_id'] }}"><h5>{{ video['creator_nick'] }}</h5></a>
             </li>
         </ul>
         {% endfor %}
