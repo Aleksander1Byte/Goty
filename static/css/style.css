@@ -13,6 +13,21 @@ form {
     padding: 10px;
     position: relative;
 }
+.videos_container_search li {
+    list-style: none;
+    margin: 0px 0px 0px 18px;
+    height: 50%;
+    font-size: 28px;
+    text-decoration: none;
+}
+
+img.big_image {
+    width: 47%;
+}
+
+div.query_description {
+    margin: -25% 0 25% 48%;
+}
 
 .videos_container li {
     list-style: none;

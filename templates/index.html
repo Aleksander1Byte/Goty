@@ -13,12 +13,20 @@
             integrity="sha384-qlmct0AOBiA2VPZkMY3+2WqkHtIQ9lSdAsAn5RUJD/3vA5MKDgSGcdmIv4ycVxyn"
             crossorigin="anonymous"></script>
 
+    <link href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+          rel="stylesheet">
+
 
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/header.css">
+    <link rel="stylesheet" href="/static/css/fonts.css">
     <header class="header" id="nav">
         <div class="container header__container">
             <a href="/" class="logo"> {Картинка с названием} </a>
+            <form action="/search" class="search" method="get">
+                <input class="search" placeholder="Введите запрос..." type="search" name="search_query">
+                <button type="submit">Поиск</button>
+            </form>
             <nav class="header__nav">
                 <ul class="menu header__menu">
                     {% if current_user.is_authenticated %}

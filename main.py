@@ -157,6 +157,17 @@ def logout():
     return redirect("/")
 
 
+@app.route('/search', methods=['GET'])
+def search():
+    db_sess = create_session()
+    query = request.args.get("search_query")
+    videos = db_sess.query(Video).filter(Video.title.like(f'%{query}%')).all()
+    context = {
+        'videos': videos
+    }
+    return render_template('query_result.html', **context)
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -184,7 +195,9 @@ def register():
                                    message="Пароли не совпадают",
                                    current_user=current_user)
         db_sess = create_session()
-        if db_sess.query(User).filter(User.email == form.email.data).first():
+        if db_sess.query(User).filter(
+                (User.email == form.email.data) |
+                (User.nickname == form.nickname.data)).first():
             return render_template('register.html', title='Регистрация',
                                    form=form,
                                    message="Такой пользователь уже есть",
