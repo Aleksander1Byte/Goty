@@ -161,7 +161,9 @@ def logout():
 def search():
     db_sess = create_session()
     query = request.args.get("search_query")
-    videos = db_sess.query(Video).filter(Video.title.like(f'%{query}%')).all()
+    videos = db_sess.query(Video).filter(
+        Video.title.like(f'%{query}%') | Video.description.like(
+            f'%{query}%')).all()
     context = {
         'videos': videos
     }
