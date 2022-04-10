@@ -8,6 +8,7 @@ from requests import get, delete
 from werkzeug.exceptions import BadRequestKeyError
 from werkzeug.utils import redirect
 
+from data.comments import Comments
 from data.db_session import create_session, global_init
 from data.forms.LoginForm import LoginForm
 from data.forms.NewVideoForm import NewVideoForm
@@ -15,6 +16,7 @@ from data.forms.RegisterForm import RegisterForm
 from data.resources import video_resources
 from data.tools.get_preview import get_preview
 from data.users import User
+from data.video_statistics import VideoStats
 from data.videos import Video
 import os.path
 
@@ -29,6 +31,14 @@ global_init('db/database.db')
 api = Api(app)
 api.add_resource(video_resources.VideosListResource, '/videos')
 api.add_resource(video_resources.VideosResource, '/videos/<int:video_id>')
+
+
+@app.route('/123123123')
+def temp123():
+    db_sess = create_session()
+    a = db_sess.query(Video).all()
+    print(a[0].stats)
+    return 'a'
 
 
 @app.route('/')
@@ -134,6 +144,9 @@ def video_post():
         video.set_preview(preview)
 
         db_sess.add(video)
+        db_sess.commit()
+        stats = VideoStats(video_id=video.id)
+        db_sess.add(stats)
         db_sess.commit()
         return '<h3>Успешная загрузка!</h3>'
 

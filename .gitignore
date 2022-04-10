@@ -1,3 +1,5 @@
 /static/previews/
 /static/videos/
 /db/
+/alembic/env.py
+/alembic/script.py.mako

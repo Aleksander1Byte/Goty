@@ -3,7 +3,7 @@ import sqlalchemy
 from sqlalchemy_serializer import SerializerMixin
 from werkzeug.datastructures import FileStorage
 
-from .db_session import SqlAlchemyBase
+from .db_session import SqlAlchemyBase, create_session
 from sqlalchemy import orm
 import os
 import datetime
@@ -11,6 +11,8 @@ import datetime
 from .tools.hash import generate_hash
 from PIL import Image
 from multipledispatch import dispatch
+
+from .video_statistics import VideoStats
 
 
 class Video(SqlAlchemyBase, UserMixin, SerializerMixin):
@@ -28,6 +30,7 @@ class Video(SqlAlchemyBase, UserMixin, SerializerMixin):
                                    sqlalchemy.ForeignKey("users.id"),
                                    nullable=False)
     creator = orm.relation('User')
+    stats = orm.relation('VideoStats', back_populates='video')
 
     def set_video(self, video):
         from main import app
@@ -51,7 +54,6 @@ class Video(SqlAlchemyBase, UserMixin, SerializerMixin):
 
     @dispatch(str)
     def set_preview(self, temp_preview_path):
-
         from main import app
         """Создаёт путь к превью, задаёт его размеры и удаляет врмееный файл"""
         self.preview_path = os.path.join(
