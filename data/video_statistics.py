@@ -1,9 +1,9 @@
-from flask_login import UserMixin
 import sqlalchemy
+from flask_login import UserMixin
+from sqlalchemy import orm
 from sqlalchemy_serializer import SerializerMixin
 
 from .db_session import SqlAlchemyBase
-from sqlalchemy import orm
 
 
 class VideoStats(SqlAlchemyBase, UserMixin, SerializerMixin):

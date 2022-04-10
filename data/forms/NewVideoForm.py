@@ -1,6 +1,6 @@
-from wtforms import SubmitField, FileField, TextAreaField, StringField
-from wtforms.validators import DataRequired, Length
 from flask_wtf import FlaskForm
+from wtforms import FileField, StringField, SubmitField, TextAreaField
+from wtforms.validators import DataRequired, Length
 
 
 class NewVideoForm(FlaskForm):

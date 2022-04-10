@@ -1,5 +1,6 @@
-import cv2
 from random import randrange
+
+import cv2
 
 
 def get_preview(video_file) -> str:

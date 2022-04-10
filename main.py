@@ -1,10 +1,11 @@
+import os.path
 from random import shuffle
 
-from flask import Flask, Response, render_template, request, jsonify
-from flask_login import login_user, login_required, logout_user, current_user, \
-    LoginManager
+from flask import Flask, Response, jsonify, render_template, request
+from flask_login import (LoginManager, current_user, login_required,
+                         login_user, logout_user)
 from flask_restful import Api, abort
-from requests import get, delete
+from requests import delete, get
 from werkzeug.exceptions import BadRequestKeyError
 from werkzeug.utils import redirect
 
@@ -18,7 +19,6 @@ from data.tools.get_preview import get_preview
 from data.users import User
 from data.video_statistics import VideoStats
 from data.videos import Video
-import os.path
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'

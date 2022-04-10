@@ -1,10 +1,9 @@
-from flask_restful import abort, Resource
 from flask import jsonify
+from flask_restful import Resource, abort
 
 from data import db_session
-from data.videos import Video
-
 from data.reg_parse_video import parser
+from data.videos import Video
 
 
 def abort_if_video_not_found(video_id):

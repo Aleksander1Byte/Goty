@@ -1,7 +1,7 @@
-from wtforms import EmailField, PasswordField, StringField, SubmitField, \
-    IntegerField
-from wtforms.validators import DataRequired
 from flask_wtf import FlaskForm
+from wtforms import (EmailField, IntegerField, PasswordField, StringField,
+                     SubmitField)
+from wtforms.validators import DataRequired
 
 
 class RegisterForm(FlaskForm):

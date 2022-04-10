@@ -1,17 +1,16 @@
-from flask_login import UserMixin
+import datetime
+import os
+
 import sqlalchemy
+from flask_login import UserMixin
+from multipledispatch import dispatch
+from PIL import Image
+from sqlalchemy import orm
 from sqlalchemy_serializer import SerializerMixin
 from werkzeug.datastructures import FileStorage
 
 from .db_session import SqlAlchemyBase, create_session
-from sqlalchemy import orm
-import os
-import datetime
-
 from .tools.hash import generate_hash
-from PIL import Image
-from multipledispatch import dispatch
-
 from .video_statistics import VideoStats
 
 
