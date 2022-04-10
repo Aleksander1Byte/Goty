@@ -63,29 +63,51 @@ def delete_video(video_id):
     return redirect('/')
 
 
-@app.route('/watch/<string:video_hash>')
+@app.route('/watch/<string:video_hash>', methods=['GET', 'POST'])
 def watch_video(video_hash):
-    index = 0
-    db_sess = create_session()
-    video_orig = db_sess.query(Video).filter(
-        Video.path.like("%" + video_hash + "%")).first()
+    if request.method == 'POST' and current_user.is_authenticated:
+        method = list(request.form.keys())[0].split('.')[0]  # like or dislike
+        db_sess = create_session()
+        video = db_sess.query(Video).where(
+            Video.path.like(f'%{video_hash}%')).first()
+        stats = video.stats[0]
+        if stats.participants != '':
+            if str(current_user.id) in set(stats.participants.split()):
+                return redirect(f'/watch/{video_hash}')
+            stats.participants += str(current_user.id) + ' '
+        else:
+            stats.participants = str(current_user.id) + ' '
 
-    videos = get('http://127.0.0.1:8080/videos').json()
-    try:
-        for video in videos['videos']:
-            if video['id'] == video_orig.id:
-                index = videos['videos'].index(video)
-            video['creator_nick'] = db_sess.query(User).get(
-                video['creator_id']).nickname
-    except AttributeError:
-        abort(404, message=f"Video {video_hash} not found")
-    videos['videos'].pop(index)
-    videos['videos'] = videos['videos'][:4]
-    shuffle(videos['videos'])
-    videos = videos['videos']
-    return render_template('watch.html', title=video_orig.title,
-                           current_user=current_user, video=video_orig,
-                           author=video_orig.creator.nickname, videos=videos)
+        if method == 'like':
+            stats.likes += 1
+        elif method == 'dislike':
+            stats.dislikes += 1
+
+        db_sess.commit()
+        return redirect(f'/watch/{video_hash}')
+    else:
+        index = 0
+        db_sess = create_session()
+        video_orig = db_sess.query(Video).filter(
+            Video.path.like("%" + video_hash + "%")).first()
+
+        videos = get('http://127.0.0.1:8080/videos').json()
+        try:
+            for video in videos['videos']:
+                if video['id'] == video_orig.id:
+                    index = videos['videos'].index(video)
+                video['creator_nick'] = db_sess.query(User).get(
+                    video['creator_id']).nickname
+        except AttributeError:
+            abort(404, message=f"Video {video_hash} not found")
+        videos['videos'].pop(index)
+        videos['videos'] = videos['videos'][:4]
+        shuffle(videos['videos'])
+        videos = videos['videos']
+        return render_template('watch.html', title=video_orig.title,
+                               current_user=current_user, video=video_orig,
+                               author=video_orig.creator.nickname,
+                               videos=videos)
 
 
 @app.route('/video/post', methods=['GET', 'POST'])

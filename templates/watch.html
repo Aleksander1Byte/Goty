@@ -7,7 +7,9 @@
         <source src="../{{ video['path'] }}">
     </video>
     <h1>{{ video['title'] }}</h1>
-    <h3 class="stats"> {{ video.stats[0].likes }} {{ video.stats[0].dislikes }} </h3>
+    <form action="" method="POST" enctype=multipart/form-data style="margin: 0 0 0 0">
+    <h3 class="stats"> {{ video.stats[0].likes }} <input type="image" src="/static/img/like.png" name="like">
+        {{ video.stats[0].dislikes }} <input type="image" src="/static/img/dislike.png" name="dislike"></h3></form>
     <hr>
     <h2><a href="../user/{{ video['creator_id'] }}">{{ author }}</a></h2>
     <h4> {{ video['created_date'].strftime('%Y-%m-%d %H:%M:%S') }}</h4>
@@ -27,7 +29,9 @@
         </ul>
         {% endfor %}
     </div>
-    <h3 class="description" style="margin: {{ -(23 - (5 - ((videos|length) % 5)) + (7 * ((videos|length) - (2 * (5 - ((videos|length) % 5)))))) }}% 0px 0px 0px">{{ video['description'] }}</h3>
+    <h3 class="description"
+        style="margin: {{ -(23 - (5 - ((videos|length) % 5)) + (7 * ((videos|length) - (2 * (5 - ((videos|length) % 5)))))) }}% 0px 0px 0px">
+        {{ video['description'] }}</h3>
 </div>
 
 
