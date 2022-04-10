@@ -33,14 +33,6 @@ api.add_resource(video_resources.VideosListResource, '/videos')
 api.add_resource(video_resources.VideosResource, '/videos/<int:video_id>')
 
 
-@app.route('/123123123')
-def temp123():
-    db_sess = create_session()
-    a = db_sess.query(Video).all()
-    print(a[0].stats)
-    return 'a'
-
-
 @app.route('/')
 def main():
     db_sess = create_session()
@@ -91,7 +83,6 @@ def watch_video(video_hash):
     videos['videos'] = videos['videos'][:4]
     shuffle(videos['videos'])
     videos = videos['videos']
-
     return render_template('watch.html', title=video_orig.title,
                            current_user=current_user, video=video_orig,
                            author=video_orig.creator.nickname, videos=videos)

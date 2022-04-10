@@ -7,6 +7,7 @@
         <source src="../{{ video['path'] }}">
     </video>
     <h1>{{ video['title'] }}</h1>
+    <h3 class="stats"> {{ video.stats[0].likes }} {{ video.stats[0].dislikes }} </h3>
     <hr>
     <h2><a href="../user/{{ video['creator_id'] }}">{{ author }}</a></h2>
     <h4> {{ video['created_date'].strftime('%Y-%m-%d %H:%M:%S') }}</h4>

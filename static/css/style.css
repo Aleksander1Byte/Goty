@@ -4,6 +4,10 @@ body {
 form {
     margin: 0 15% 0 15%;
 }
+h3.stats {
+    text-align: right;
+    width: 73%;
+}
 .videos_container {
     display: flex;
     flex-wrap: wrap;

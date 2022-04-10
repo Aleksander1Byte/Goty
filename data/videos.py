@@ -9,9 +9,8 @@ from sqlalchemy import orm
 from sqlalchemy_serializer import SerializerMixin
 from werkzeug.datastructures import FileStorage
 
-from .db_session import SqlAlchemyBase, create_session
+from .db_session import SqlAlchemyBase
 from .tools.hash import generate_hash
-from .video_statistics import VideoStats
 
 
 class Video(SqlAlchemyBase, UserMixin, SerializerMixin):

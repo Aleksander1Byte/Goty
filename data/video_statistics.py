@@ -15,5 +15,5 @@ class VideoStats(SqlAlchemyBase, UserMixin, SerializerMixin):
     likes = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     dislikes = sqlalchemy.Column(sqlalchemy.Integer, default=0)
 
-    comments = orm.relation('Comments')
+    comments = orm.relation('Comments', overlaps="video_stats")
     video = orm.relation('Video')
