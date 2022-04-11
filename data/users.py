@@ -18,6 +18,10 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime,
                                      default=datetime.datetime.now)
+    liked_videos = sqlalchemy.Column(sqlalchemy.String, nullable=False,
+                                     default=' ')
+    disliked_videos = sqlalchemy.Column(sqlalchemy.String, nullable=False,
+                                        default=' ')
 
     videos = orm.relation('Video', back_populates='creator')
     comments = orm.relation('Comments', back_populates='creator')

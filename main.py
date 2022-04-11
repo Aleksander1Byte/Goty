@@ -65,32 +65,51 @@ def delete_video(video_id):
 
 @app.route('/watch/<string:video_hash>', methods=['GET', 'POST'])
 def watch_video(video_hash):
+    db_sess = create_session()
+    video_orig = db_sess.query(Video).where(
+        Video.path.like(f'%{video_hash}%')).first()
+
     if request.method == 'POST' and current_user.is_authenticated:
+
+        user = db_sess.get(User, current_user.id)
+
         method = list(request.form.keys())[0].split('.')[0]  # like or dislike
-        db_sess = create_session()
-        video = db_sess.query(Video).where(
-            Video.path.like(f'%{video_hash}%')).first()
-        stats = video.stats[0]
-        if stats.participants != '':
-            if str(current_user.id) in set(stats.participants.split()):
-                return redirect(f'/watch/{video_hash}')
-            stats.participants += str(current_user.id) + ' '
-        else:
-            stats.participants = str(current_user.id) + ' '
+        stats = video_orig.stats[0]
+        if str(video_orig.id) in set(user.liked_videos.split()) | set(
+                user.disliked_videos.split()):
+            if method == 'like':
+                if str(video_orig.id) in user.liked_videos:
+                    pass
+                elif str(video_orig.id) in user.disliked_videos:
+                    user.disliked_videos = user.disliked_videos.replace(
+                        str(video_orig.id) + ' ', '', 1)
+
+                    user.liked_videos += str(video_orig.id) + ' '
+                    stats.likes += 1
+                    stats.dislikes -= 1
+            else:
+                if str(video_orig.id) in user.disliked_videos:
+                    pass
+                elif str(video_orig.id) in user.liked_videos:
+                    user.disliked_videos += str(video_orig.id) + ' '
+
+                    user.liked_videos = user.liked_videos.replace(
+                        str(video_orig.id) + ' ', '', 1)
+                    stats.likes -= 1
+                    stats.dislikes += 1
+            db_sess.commit()
+            return redirect(f'/watch/{video_hash}')
 
         if method == 'like':
+            user.liked_videos += str(video_orig.id) + ' '
             stats.likes += 1
         elif method == 'dislike':
+            user.disliked_videos += str(video_orig.id) + ' '
             stats.dislikes += 1
-
         db_sess.commit()
         return redirect(f'/watch/{video_hash}')
     else:
         index = 0
-        db_sess = create_session()
-        video_orig = db_sess.query(Video).filter(
-            Video.path.like("%" + video_hash + "%")).first()
-
         videos = get('http://127.0.0.1:8080/videos').json()
         try:
             for video in videos['videos']:
