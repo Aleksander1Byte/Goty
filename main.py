@@ -81,22 +81,12 @@ def watch_video(video_hash):
                 if str(video_orig.id) in user.liked_videos:
                     pass
                 elif str(video_orig.id) in user.disliked_videos:
-                    user.disliked_videos = user.disliked_videos.replace(
-                        str(video_orig.id) + ' ', '', 1)
-
-                    user.liked_videos += str(video_orig.id) + ' '
-                    stats.likes += 1
-                    stats.dislikes -= 1
+                    change_mark(stats, user, video_orig, 'dislike')
             else:
                 if str(video_orig.id) in user.disliked_videos:
                     pass
                 elif str(video_orig.id) in user.liked_videos:
-                    user.disliked_videos += str(video_orig.id) + ' '
-
-                    user.liked_videos = user.liked_videos.replace(
-                        str(video_orig.id) + ' ', '', 1)
-                    stats.likes -= 1
-                    stats.dislikes += 1
+                    change_mark(stats, user, video_orig, 'like')
             db_sess.commit()
             return redirect(f'/watch/{video_hash}')
 
@@ -127,6 +117,22 @@ def watch_video(video_hash):
                                current_user=current_user, video=video_orig,
                                author=video_orig.creator.nickname,
                                videos=videos)
+
+
+def change_mark(stats, user, video_orig, method: str):
+    if method == 'dislike':
+        user.disliked_videos = user.disliked_videos.replace(
+            str(video_orig.id) + ' ', '', 1)
+        user.liked_videos += str(video_orig.id) + ' '
+        stats.likes += 1
+        stats.dislikes -= 1
+    else:
+        user.disliked_videos += str(video_orig.id) + ' '
+
+        user.liked_videos = user.liked_videos.replace(
+            str(video_orig.id) + ' ', '', 1)
+        stats.likes -= 1
+        stats.dislikes += 1
 
 
 @app.route('/video/post', methods=['GET', 'POST'])
