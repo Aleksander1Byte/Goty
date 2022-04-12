@@ -9,6 +9,7 @@
     <h1>{{ video['title'] }}</h1>
     <form action="" method="POST" enctype=multipart/form-data style="margin: 0 0 0 0">
         <h3 class="stats"> {{ video.stats[0].likes }}
+            {% if current_user.is_authenticated %}
             {% if video['id']|string in current_user.liked_videos.split() %}
             <input type="image" src="/static/img/like_placed.png" name="like">
             {% else %}
@@ -20,6 +21,11 @@
             {% if video['id']|string in current_user.disliked_videos.split() %}
             <input type="image" src="/static/img/dislike_placed.png" name="dislike">
             {% else %}
+            <input type="image" src="/static/img/dislike.png" name="dislike">
+            {% endif %}
+            {% else %}
+            <input type="image" src="/static/img/like.png" name="like">
+            {{ video.stats[0].dislikes }}
             <input type="image" src="/static/img/dislike.png" name="dislike">
             {% endif %}
     </h3></form>

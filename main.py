@@ -1,7 +1,7 @@
 import os.path
 from random import shuffle
 
-from flask import Flask, Response, jsonify, render_template, request
+from flask import Flask, render_template, request
 from flask_login import (LoginManager, current_user, login_required,
                          login_user, logout_user)
 from flask_restful import Api, abort
@@ -9,7 +9,6 @@ from requests import delete, get
 from werkzeug.exceptions import BadRequestKeyError
 from werkzeug.utils import redirect
 
-from data.comments import Comments
 from data.db_session import create_session, global_init
 from data.forms.LoginForm import LoginForm
 from data.forms.NewVideoForm import NewVideoForm
@@ -100,6 +99,8 @@ def watch_video(video_hash):
             stats.dislikes += 1
         db_sess.commit()
         return redirect(f'/watch/{video_hash}')
+    elif request.method == 'POST':
+        return redirect('http://127.0.0.1:8080/register')
     else:
         videos = get_random_videos(db_sess, video_orig)
         return render_template('watch.html', title=video_orig.title,

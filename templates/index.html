@@ -34,7 +34,7 @@
                         <a href="/video/post" class="btn btn-secondary">Загрузить видео</a>
                     </li>
                     <li>
-                        <a class="navbar-brand nickname" href="/logout"><h3>{{ current_user.nickname }}</h3></a>
+                        <a class="navbar-brand nickname" href="/user/{{ current_user.id }}"><h3>{{ current_user.nickname }}</h3></a>
                     </li>
 
                     {% else %}
