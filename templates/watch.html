@@ -8,8 +8,21 @@
     </video>
     <h1>{{ video['title'] }}</h1>
     <form action="" method="POST" enctype=multipart/form-data style="margin: 0 0 0 0">
-    <h3 class="stats"> {{ video.stats[0].likes }} <input type="image" src="/static/img/like.png" name="like">
-        {{ video.stats[0].dislikes }} <input type="image" src="/static/img/dislike.png" name="dislike"></h3></form>
+        <h3 class="stats"> {{ video.stats[0].likes }}
+            {% if video['id']|string in current_user.liked_videos.split() %}
+            <input type="image" src="/static/img/like_placed.png" name="like">
+            {% else %}
+            <input type="image" src="/static/img/like.png" name="like">
+            {% endif %}
+
+            {{ video.stats[0].dislikes }}
+
+            {% if video['id']|string in current_user.disliked_videos.split() %}
+            <input type="image" src="/static/img/dislike_placed.png" name="dislike">
+            {% else %}
+            <input type="image" src="/static/img/dislike.png" name="dislike">
+            {% endif %}
+    </h3></form>
     <hr>
     <h2><a href="../user/{{ video['creator_id'] }}">{{ author }}</a></h2>
     <h4> {{ video['created_date'].strftime('%Y-%m-%d %H:%M:%S') }}</h4>

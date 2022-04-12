@@ -88,6 +88,7 @@ def watch_video(video_hash):
                 elif str(video_orig.id) in user.liked_videos:
                     change_mark(stats, user, video_orig, 'like')
             db_sess.commit()
+
             return redirect(f'/watch/{video_hash}')
 
         if method == 'like':
@@ -99,24 +100,29 @@ def watch_video(video_hash):
         db_sess.commit()
         return redirect(f'/watch/{video_hash}')
     else:
-        index = 0
-        videos = get('http://127.0.0.1:8080/videos').json()
-        try:
-            for video in videos['videos']:
-                if video['id'] == video_orig.id:
-                    index = videos['videos'].index(video)
-                video['creator_nick'] = db_sess.query(User).get(
-                    video['creator_id']).nickname
-        except AttributeError:
-            abort(404, message=f"Video {video_hash} not found")
-        videos['videos'].pop(index)
-        videos['videos'] = videos['videos'][:4]
-        shuffle(videos['videos'])
-        videos = videos['videos']
+        videos = get_random_videos(db_sess, video_orig)
         return render_template('watch.html', title=video_orig.title,
                                current_user=current_user, video=video_orig,
                                author=video_orig.creator.nickname,
                                videos=videos)
+
+
+def get_random_videos(db_sess, video_orig):
+    index = 0
+    videos = get('http://127.0.0.1:8080/videos').json()
+    try:
+        for video in videos['videos']:
+            if video['id'] == video_orig.id:
+                index = videos['videos'].index(video)
+            video['creator_nick'] = db_sess.query(User).get(
+                video['creator_id']).nickname
+    except AttributeError:
+        abort(404, message=f"Video not found")
+    videos['videos'].pop(index)
+    videos['videos'] = videos['videos'][:4]
+    shuffle(videos['videos'])
+    videos = videos['videos']
+    return videos
 
 
 def change_mark(stats, user, video_orig, method: str):
@@ -126,7 +132,7 @@ def change_mark(stats, user, video_orig, method: str):
         user.liked_videos += str(video_orig.id) + ' '
         stats.likes += 1
         stats.dislikes -= 1
-    else:
+    elif method == 'like':
         user.disliked_videos += str(video_orig.id) + ' '
 
         user.liked_videos = user.liked_videos.replace(
