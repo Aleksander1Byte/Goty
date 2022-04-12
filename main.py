@@ -19,6 +19,7 @@ from data.tools.get_preview import get_preview
 from data.users import User
 from data.video_statistics import VideoStats
 from data.videos import Video
+from typing import Union
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -79,12 +80,12 @@ def watch_video(video_hash):
                 user.disliked_videos.split()):
             if method == 'like':
                 if str(video_orig.id) in user.liked_videos:
-                    pass
+                    change_mark(stats, user, video_orig, None)
                 elif str(video_orig.id) in user.disliked_videos:
                     change_mark(stats, user, video_orig, 'dislike')
             else:
                 if str(video_orig.id) in user.disliked_videos:
-                    pass
+                    change_mark(stats, user, video_orig, None)
                 elif str(video_orig.id) in user.liked_videos:
                     change_mark(stats, user, video_orig, 'like')
             db_sess.commit()
@@ -125,7 +126,7 @@ def get_random_videos(db_sess, video_orig):
     return videos
 
 
-def change_mark(stats, user, video_orig, method: str):
+def change_mark(stats, user, video_orig, method: Union[str, None]) -> None:
     if method == 'dislike':
         user.disliked_videos = user.disliked_videos.replace(
             str(video_orig.id) + ' ', '', 1)
@@ -139,6 +140,15 @@ def change_mark(stats, user, video_orig, method: str):
             str(video_orig.id) + ' ', '', 1)
         stats.likes -= 1
         stats.dislikes += 1
+    else:
+        if str(video_orig.id) in user.liked_videos:
+            user.liked_videos = user.liked_videos.replace(
+                str(video_orig.id) + ' ', '', 1)
+            stats.likes -= 1
+        elif str(video_orig.id) in user.disliked_videos:
+            user.disliked_videos = user.disliked_videos.replace(
+                str(video_orig.id) + ' ', '', 1)
+            stats.dislikes -= 1
 
 
 @app.route('/video/post', methods=['GET', 'POST'])
