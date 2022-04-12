@@ -30,6 +30,9 @@ class Video(SqlAlchemyBase, UserMixin, SerializerMixin):
     creator = orm.relation('User')
     stats = orm.relation('VideoStats', back_populates='video')
 
+    def __hash__(self):
+        return self.path.split('/')[-1][:-4]
+
     def set_video(self, video):
         from main import app
         """Создаёт путь к видео"""

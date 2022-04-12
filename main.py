@@ -203,7 +203,8 @@ def video_post():
         stats = VideoStats(video_id=video.id)
         db_sess.add(stats)
         db_sess.commit()
-        return '<h3>Успешная загрузка!</h3>'
+        return f"""<h3>Успешная загрузка! <a href="/watch/{video.__hash__()}">
+Посмотрите видео тут</a></h3>"""
 
     if request.method == 'GET':
         return render_template('new_video.html', title='Goty - Upload a video',
@@ -231,7 +232,7 @@ def search():
     query = request.args.get("search_query")
     videos = db_sess.query(Video).filter(
         Video.title.like(f'%{query}%') | Video.description.like(
-            f'%{query}%')).all()
+            f'%{query}%') | User.nickname.like(f'%{query}%')).all()
     context = {
         'videos': videos
     }
@@ -279,7 +280,7 @@ def register():
         user.set_password(form.password.data)
         db_sess.add(user)
         db_sess.commit()
-        return redirect('/')
+        return redirect('/login')
     return render_template('register.html', title='Регистрация', form=form,
                            current_user=current_user)
 
