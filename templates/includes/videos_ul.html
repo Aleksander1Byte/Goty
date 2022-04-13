@@ -1,0 +1,5 @@
+<ul>
+    <li><a href="../watch/{{ video['path'].split('/')[-1][:-4] }}"><img src="../{{ video['preview_path'] }}"></a>
+        <h4>{{ video['title'] }}</h4> <h5>{{ video['created_date'].strftime('%Y-%m-%d %H:%M:%S') }}</h5>
+    </li>
+</ul>

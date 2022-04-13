@@ -1,10 +1,11 @@
 import os.path
 from random import shuffle
+from typing import Union
 
 from flask import Flask, render_template, request
 from flask_login import (LoginManager, current_user, login_required,
                          login_user, logout_user)
-from flask_restful import Api, abort
+from flask_restful import Api
 from requests import delete, get
 from werkzeug.exceptions import BadRequestKeyError
 from werkzeug.utils import redirect
@@ -15,10 +16,11 @@ from data.forms.NewVideoForm import NewVideoForm
 from data.forms.RegisterForm import RegisterForm
 from data.resources import video_resources
 from data.tools.get_preview import get_preview
+from data.tools.video_filters import (get_liked_and_disliked_videos,
+                                      get_random_videos)
 from data.users import User
 from data.video_statistics import VideoStats
 from data.videos import Video
-from typing import Union
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -51,9 +53,10 @@ def main():
 def account(user_id):
     db_sess = create_session()
     user = db_sess.query(User).get(user_id)
-    #  user.id == current_user.id
     return render_template('account.html', title=user.nickname,
-                           current_user=current_user, user=user)
+                           current_user=current_user, user=user,
+                           liked_disliked_videos=get_liked_and_disliked_videos(
+                               user))
 
 
 @app.route('/video_delete/<int:video_id>')
@@ -107,24 +110,6 @@ def watch_video(video_hash):
                                current_user=current_user, video=video_orig,
                                author=video_orig.creator.nickname,
                                videos=videos)
-
-
-def get_random_videos(db_sess, video_orig):
-    index = 0
-    videos = get('http://127.0.0.1:8080/videos').json()
-    try:
-        for video in videos['videos']:
-            if video['id'] == video_orig.id:
-                index = videos['videos'].index(video)
-            video['creator_nick'] = db_sess.query(User).get(
-                video['creator_id']).nickname
-    except AttributeError:
-        abort(404, message=f"Video not found")
-    videos['videos'].pop(index)
-    videos['videos'] = videos['videos'][:4]
-    shuffle(videos['videos'])
-    videos = videos['videos']
-    return videos
 
 
 def change_mark(stats, user, video_orig, method: Union[str, None]) -> None:
