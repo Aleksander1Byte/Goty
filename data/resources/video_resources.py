@@ -27,9 +27,11 @@ class VideosResource(Resource):
         abort_if_video_not_found(video_id)
         session = db_session.create_session()
         video = session.query(Video).get(video_id)
+        stats = video.stats[0]
         os.remove(video.path)
         os.remove(video.preview_path)
         session.delete(video)
+        session.delete(stats)
         session.commit()
         return jsonify({'success': 'OK'})
 
