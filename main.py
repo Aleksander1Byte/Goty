@@ -29,6 +29,7 @@ app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 5120  # 5 GB
 login_manager = LoginManager()
 login_manager.init_app(app)
 global_init('db/database.db')
+DEBUG = False
 
 api = Api(app)
 api.add_resource(video_resources.VideosListResource, '/videos')
@@ -271,7 +272,11 @@ def register():
 
 
 if __name__ == '__main__':
-    PORT = int(os.environ.get("PORT", 5000))
-    HOST = '0.0.0.0'
+    if DEBUG:
+        PORT = 5050
+        HOST = '127.0.0.1'
+    else:
+        PORT = int(os.environ.get("PORT", 5000))
+        HOST = '0.0.0.0'
     ADDRESS = HOST + ':' + str(PORT)
     app.run(host=HOST, port=PORT)
