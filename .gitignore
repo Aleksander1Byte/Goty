@@ -3,3 +3,4 @@
 /db/
 /alembic/env.py
 /alembic/script.py.mako
+/venv/
