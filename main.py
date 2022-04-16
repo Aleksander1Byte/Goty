@@ -30,7 +30,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 global_init('db/database.db')
 
-DEBUG = True
+DEBUG = False
 api = Api(app)
 api.add_resource(video_resources.VideosListResource, '/videos')
 api.add_resource(video_resources.VideosResource, '/videos/<int:video_id>')
