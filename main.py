@@ -29,7 +29,7 @@ app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 5120  # 5 GB
 login_manager = LoginManager()
 login_manager.init_app(app)
 global_init('db/database.db')
-DEBUG = False
+DEBUG = True
 
 api = Api(app)
 api.add_resource(video_resources.VideosListResource, '/videos')
