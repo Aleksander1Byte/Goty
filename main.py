@@ -38,7 +38,7 @@ api.add_resource(video_resources.VideosResource, '/videos/<int:video_id>')
 @app.route('/')
 def main():
     db_sess = create_session()
-    videos = get('http://127.0.0.1:8080/videos').json()
+    videos = get(f'http://{ADDRESS}/videos').json()
     for video in videos['videos'][:12]:
         video['creator_nick'] = db_sess.query(User).get(
             video['creator_id']).nickname
@@ -62,7 +62,7 @@ def account(user_id):
 @app.route('/video_delete/<int:video_id>')
 @login_required
 def delete_video(video_id):
-    delete(f'http://127.0.0.1:8080/videos/{video_id}')
+    delete(f'http://{ADDRESS}/videos/{video_id}')
     return redirect('/')
 
 
@@ -103,7 +103,7 @@ def watch_video(video_hash):
         db_sess.commit()
         return redirect(f'/watch/{video_hash}')
     elif request.method == 'POST':
-        return redirect('http://127.0.0.1:8080/register')
+        return redirect(f'http://{ADDRESS}/register')
     else:
         videos = get_random_videos(db_sess, video_orig)
         return render_template('watch.html', title=video_orig.title,
@@ -271,4 +271,7 @@ def register():
 
 
 if __name__ == '__main__':
-    app.run(port=8080, host='127.0.0.1')
+    PORT = int(os.environ.get("PORT", 5000))
+    HOST = '0.0.0.0'
+    ADDRESS = HOST + ':' + str(PORT)
+    app.run(host=HOST, port=PORT)
