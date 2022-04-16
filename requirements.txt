@@ -1,9 +1,9 @@
 WTForms~=3.0.1
 opencv-python~=4.5.5.62
+requests~=2.27.1
 SQLAlchemy~=1.4.31
 Werkzeug~=2.0.2
 Flask~=2.0.2
-Pillow~=9.1.0
 multipledispatch~=0.6.0
+Pillow~=9.1.0
 alembic~=1.7.7
-requests~=2.27.1
