@@ -8,9 +8,9 @@ from data.users import User
 from data.videos import Video
 
 
-def get_random_videos(db_sess, video_orig):
+def get_random_videos(db_sess, video_orig, ADDRESS):
     index = 0
-    videos = get('http://127.0.0.1:8080/videos').json()
+    videos = get(f'http://{ADDRESS}/videos').json()
     try:
         for video in videos['videos']:
             if video['id'] == video_orig.id:

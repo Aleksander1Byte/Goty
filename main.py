@@ -24,13 +24,13 @@ from data.videos import Video
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
-app.config['UPLOAD_FOLDER'] = 'static/'
+app.config['UPLOAD_FOLDER'] = 'static/media/'
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 5120  # 5 GB
 login_manager = LoginManager()
 login_manager.init_app(app)
 global_init('db/database.db')
 
-DEBUG = False
+DEBUG = True
 api = Api(app)
 api.add_resource(video_resources.VideosListResource, '/videos')
 api.add_resource(video_resources.VideosResource, '/videos/<int:video_id>')
@@ -106,7 +106,7 @@ def watch_video(video_hash):
     elif request.method == 'POST':
         return redirect(f'http://{ADDRESS}/register')
     else:
-        videos = get_random_videos(db_sess, video_orig)
+        videos = get_random_videos(db_sess, video_orig, ADDRESS)
         return render_template('watch.html', title=video_orig.title,
                                current_user=current_user, video=video_orig,
                                author=video_orig.creator.nickname,
