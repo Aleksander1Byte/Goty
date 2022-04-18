@@ -30,11 +30,11 @@
     <link rel="stylesheet" href="/static/css/fonts.css">
     <header class="header" id="nav">
         <div class="container header__container">
-            <a href="/" class="logo"> {Картинка с названием} </a>
             <form action="/search" class="search" method="get">
                 <input class="search" placeholder="Введите запрос..." type="search" name="search_query">
                 <button type="submit">Поиск</button>
             </form>
+            <a href="/"> <img class="logo" src="/static/img/horizontal_logo_transparent.png"></a>
             <nav class="header__nav">
                 <ul class="menu header__menu">
                     {% if current_user.is_authenticated %}
@@ -45,7 +45,6 @@
                         <a class="navbar-brand nickname" href="/user/{{ current_user.id }}"><h3>{{ current_user.nickname
                             }}</h3></a>
                     </li>
-
                     {% else %}
                     <li><a class="btn btn-primary" href="/login">Вход</a></li>
                     <li><a class="btn btn-success" href="/register">Регистрация</a></li>
